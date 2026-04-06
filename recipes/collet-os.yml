@@ -51,7 +51,6 @@ modules:
       - yelp-libs
       - yelp-xsl
       - rygel
-      - totem-pl-parser
 
   # ── Default Flatpak applications ─────────────────────────
   - type: default-flatpaks
