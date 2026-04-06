@@ -22,9 +22,9 @@ from gi.repository import GLib
 OLLAMA_ENDPOINT = os.environ.get(
     "COLLET_OLLAMA_ENDPOINT", "http://localhost:11434"
 )
-OLLAMA_MODEL = os.environ.get("COLLET_OLLAMA_MODEL", "collet-assistant")
-MIN_QUERY_LENGTH = 6
-AI_TIMEOUT = 5  # Short timeout for search provider (Activities expects fast results)
+OLLAMA_MODEL = os.environ.get("COLLET_OLLAMA_MODEL", "llama3.2:3b")
+MIN_QUERY_LENGTH = 3
+AI_TIMEOUT = 30  # Local model on CPU can take time
 
 SEARCH_PROVIDER_IFACE = "org.gnome.Shell.SearchProvider2"
 BUS_NAME = "org.collet.AISearchProvider"
@@ -92,7 +92,14 @@ class ColletAISearchProvider(dbus.service.Object):
         out_signature="as",
     )
     def GetInitialResultSet(self, terms):
-        query = " ".join(terms)
+        query = " ".join(terms).strip()
+
+        # Only respond to queries prefixed with ?
+        if not query.startswith("?"):
+            return []
+
+        # Strip the ? prefix
+        query = query.lstrip("?").strip()
         if len(query) < MIN_QUERY_LENGTH:
             return []
 
