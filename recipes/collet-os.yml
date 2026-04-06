@@ -5,7 +5,7 @@
 name: collet-os
 description: Collet OS — AI-powered sovereign desktop
 base-image: ghcr.io/ublue-os/silverblue-main
-image-version: 41
+image-version: gts
 
 modules:
   # ── System packages ──────────────────────────────────────
