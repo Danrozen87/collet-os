@@ -36,32 +36,26 @@ modules:
 
   # ── Default Flatpak applications ─────────────────────────
   - type: default-flatpaks
-    notify: true
-    system:
-      install:
-        # Browser
-        - org.mozilla.firefox
-
-        # Office
-        - org.libreoffice.LibreOffice
-
-        # Communication
-        - org.signal.Signal
-
-        # Utilities
-        - org.gnome.Calculator
-        - org.gnome.Calendar
-        - org.gnome.TextEditor
-        - org.gnome.Loupe
-        - org.gnome.clocks
-        - com.mattjakeman.ExtensionManager
-
-        # Media
-        - org.gnome.Showtime
-        - io.bassi.Amberol
-
-      remove:
-        - org.fedoraproject.MediaWriter
+    configurations:
+      - scope: system
+        notify: true
+        install:
+          # Browser
+          - org.mozilla.firefox
+          # Office
+          - org.libreoffice.LibreOffice
+          # Communication
+          - org.signal.Signal
+          # Utilities
+          - org.gnome.Calculator
+          - org.gnome.Calendar
+          - org.gnome.TextEditor
+          - org.gnome.Loupe
+          - org.gnome.clocks
+          - com.mattjakeman.ExtensionManager
+          # Media
+          - org.gnome.Showtime
+          - io.bassi.Amberol
 
   # ── Copy system configuration files ──────────────────────
   - type: files
