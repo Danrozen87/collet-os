@@ -128,20 +128,20 @@ class ColletAISearchProvider(dbus.service.Object):
 
     @dbus.service.method(
         SEARCH_PROVIDER_IFACE,
-        in_signature="sas",
+        in_signature="sasu",
         out_signature="",
     )
-    def ActivateResult(self, result_id, terms, timestamp=0):
+    def ActivateResult(self, result_id, terms, timestamp):
         # Open the full command palette with the query
         query = " ".join(terms) if terms else self._last_query
         os.spawnlp(os.P_NOWAIT, "collet-palette", "collet-palette")
 
     @dbus.service.method(
         SEARCH_PROVIDER_IFACE,
-        in_signature="as",
+        in_signature="asu",
         out_signature="",
     )
-    def LaunchSearch(self, terms, timestamp=0):
+    def LaunchSearch(self, terms, timestamp):
         os.spawnlp(os.P_NOWAIT, "collet-palette", "collet-palette")
 
 
