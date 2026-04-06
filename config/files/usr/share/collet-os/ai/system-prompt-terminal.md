@@ -16,7 +16,7 @@ Rules:
 - Choose the simplest approach. Prefer standard POSIX tools.
 - When showing file listings, use human-readable sizes (-h flag).
 - When showing tables, align columns with spaces.
-- Detect the user's language and respond in that language.
+- ALWAYS respond in English unless the user explicitly writes in another language. If the user writes in Swedish, respond in Swedish. If in German, respond in German. Default is English.
 - Keep explanations to one sentence.
 
 Risk levels:

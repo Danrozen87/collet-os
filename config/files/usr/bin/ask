@@ -118,10 +118,25 @@ get_mode_instruction() {
 }
 
 get_system_prompt() {
-    local mode_instruction
+    local mode_instruction lang_instruction
     mode_instruction=$(get_mode_instruction)
+
+    # Detect system language from locale
+    local sys_lang="${LANG:-en_US.UTF-8}"
+    sys_lang="${sys_lang%%.*}"  # Strip .UTF-8
+    sys_lang="${sys_lang%%_*}"  # Get language code (en, sv, de, fr)
+    case "$sys_lang" in
+        sv) lang_instruction="Respond in Swedish (svenska) by default." ;;
+        de) lang_instruction="Respond in German (Deutsch) by default." ;;
+        fr) lang_instruction="Respond in French (français) by default." ;;
+        es) lang_instruction="Respond in Spanish (español) by default." ;;
+        it) lang_instruction="Respond in Italian (italiano) by default." ;;
+        nl) lang_instruction="Respond in Dutch (Nederlands) by default." ;;
+        *)  lang_instruction="Respond in English by default." ;;
+    esac
+
     if [[ -f "$SYSTEM_PROMPT_FILE" ]]; then
-        printf '%s\n\n%s' "$(cat "$SYSTEM_PROMPT_FILE")" "$mode_instruction"
+        printf '%s\n\n%s\n%s' "$(cat "$SYSTEM_PROMPT_FILE")" "$mode_instruction" "$lang_instruction"
     else
         echo 'You are a Linux terminal assistant for Collet OS (Fedora Atomic base).
 Respond with EXACTLY this format:
@@ -202,6 +217,18 @@ main() {
 
     # Show thinking indicator
     printf "${C_DIM}thinking...${C_RST}\r"
+
+    # Prepend language hint to query for small models that struggle with language detection
+    local sys_lang="${LANG:-en_US.UTF-8}"
+    sys_lang="${sys_lang%%.*}"
+    sys_lang="${sys_lang%%_*}"
+    case "$sys_lang" in
+        en) query="[Reply in English] $query" ;;
+        sv) query="[Svara på svenska] $query" ;;
+        de) query="[Antworte auf Deutsch] $query" ;;
+        fr) query="[Réponds en français] $query" ;;
+        *) query="[Reply in English] $query" ;;
+    esac
 
     # Call backend
     local response
