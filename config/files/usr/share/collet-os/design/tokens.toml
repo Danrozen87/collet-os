@@ -1,0 +1,76 @@
+# Collet OS — Design Tokens
+# Single source of truth for the entire visual system.
+# All COSMIC RON configs, GTK4 CSS, and future targets
+# are generated from these values.
+#
+# Colors are SRGBA (0.0-1.0).
+# Derived from Collet Design System (OKLCH color space).
+# Dark: zero chroma, pure greys.
+# Light: warm muted, hue 90, minimal chroma.
+
+[meta]
+name = "Collet"
+version = "1.0"
+
+# ── Typography ─────────────────────────────────────────────
+[typography]
+ui_family = "Geist"
+mono_family = "Geist Mono"
+ui_size = 14
+mono_size = 14
+heading_weight = 600
+body_weight = 400
+label_weight = 500
+clock_weight = 200
+clock_size = 64
+
+# ── Geometry ───────────────────────────────────────────────
+[geometry]
+border_radius = 12
+border_radius_small = 8
+border_radius_large = 16
+border_radius_pill = 99
+window_gap = 4
+active_hint = 2
+
+# ── Animation ──────────────────────────────────────────────
+[animation]
+# Spring-inspired: slight overshoot then settle
+spring_curve = "cubic-bezier(0.34, 1.56, 0.64, 1)"
+spring_duration_ms = 180
+press_scale = 0.97
+hover_scale = 1.05
+
+# ── Dark Mode ──────────────────────────────────────────────
+[dark]
+bg =              [0.145, 0.145, 0.145, 1.0]  # oklch(0.145 0 0) → #252525
+surface =         [0.184, 0.184, 0.184, 1.0]  # oklch(0.185 0 0) → #2f2f2f
+surface_raised =  [0.216, 0.216, 0.216, 1.0]  # oklch(0.215 0 0) → #373737
+surface_overlay = [0.251, 0.251, 0.251, 1.0]  # oklch(0.250 0 0) → #404040
+text =            [0.878, 0.878, 0.878, 1.0]  # oklch(0.880 0 0) → #e0e0e0
+text_secondary =  [0.678, 0.678, 0.678, 1.0]  # oklch(0.680 0 0) → #adadad
+text_muted =      [0.522, 0.522, 0.522, 1.0]  # oklch(0.520 0 0) → #858585
+border =          [1.000, 1.000, 1.000, 0.06]
+border_hover =    [1.000, 1.000, 1.000, 0.10]
+primary =         [0.502, 0.502, 0.502, 1.0]  # oklch(0.500 0 0) → #808080
+destructive =     [0.769, 0.361, 0.361, 1.0]  # oklch(0.580 0.095 25)
+success =         [0.361, 0.675, 0.361, 1.0]  # oklch(0.580 0.075 145)
+warning =         [0.769, 0.627, 0.314, 1.0]  # oklch(0.690 0.100 75)
+info =            [0.361, 0.549, 0.722, 1.0]  # oklch(0.600 0.080 250)
+
+# ── Light Mode ─────────────────────────────────────────────
+[light]
+bg =              [0.949, 0.945, 0.933, 1.0]  # oklch(0.955 0.005 90)
+surface =         [1.000, 1.000, 1.000, 1.0]  # oklch(1.000 0 0)
+surface_raised =  [1.000, 1.000, 1.000, 1.0]
+surface_overlay = [1.000, 1.000, 1.000, 1.0]
+text =            [0.271, 0.263, 0.251, 1.0]  # oklch(0.270 0.003 90)
+text_secondary =  [0.420, 0.412, 0.400, 1.0]  # oklch(0.420 0.003 90)
+text_muted =      [0.569, 0.561, 0.549, 1.0]  # oklch(0.570 0.003 90)
+border =          [0.000, 0.000, 0.000, 0.08]
+border_hover =    [0.000, 0.000, 0.000, 0.12]
+primary =         [0.353, 0.345, 0.333, 1.0]  # oklch(0.355 0.003 90)
+destructive =     [0.663, 0.314, 0.314, 1.0]  # oklch(0.535 0.095 25)
+success =         [0.314, 0.584, 0.314, 1.0]  # oklch(0.535 0.075 145)
+warning =         [0.682, 0.549, 0.251, 1.0]  # oklch(0.650 0.100 75)
+info =            [0.314, 0.478, 0.643, 1.0]  # oklch(0.555 0.080 250)
