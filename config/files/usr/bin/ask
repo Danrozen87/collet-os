@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # Collet OS — Terminal AI Helper
 # Usage: ask <question>    or    ? <question> (bash)
+#        ask --mode direct <question>
+#        ask --mode guided <question>
+#        ask --backend claude <question>
 # Backend-agnostic: works with Ollama, Claude API, OpenAI/Codex
 set -euo pipefail
 
@@ -8,6 +11,7 @@ set -euo pipefail
 CONFIG_SYS="/usr/share/collet-os/ai/backend.toml"
 CONFIG_USER="${XDG_CONFIG_HOME:-$HOME/.config}/collet-os/ai/backend.toml"
 SYSTEM_PROMPT_FILE="/usr/share/collet-os/ai/system-prompt-terminal.md"
+MODE_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/collet-os/ai/mode"
 
 # Defaults (overridden by config)
 BACKEND="ollama"
@@ -31,6 +35,39 @@ read_config() {
 
 read_config "$CONFIG_SYS"
 read_config "$CONFIG_USER"  # User config overrides system
+
+# ── Interaction mode ──────────────────────────────────────
+# guided: verbose explanations, analogies, step-by-step
+# assisted: brief explanations, show command first
+# direct: minimal output, commands only
+MODE="assisted"  # Default
+[[ -f "$MODE_FILE" ]] && MODE="$(cat "$MODE_FILE" | tr -d '[:space:]')"
+
+# Parse flags
+while [[ "${1:-}" == --* ]]; do
+    case "$1" in
+        --mode)    MODE="$2"; shift 2 ;;
+        --backend) BACKEND="$2"; shift 2 ;;
+        --model)   OLLAMA_MODEL="$2"; CLAUDE_MODEL="$2"; OPENAI_MODEL="$2"; shift 2 ;;
+        --help)
+            printf "Usage: ask [--mode guided|assisted|direct] [--backend ollama|claude|openai] <question>\n"
+            printf "       ask --set-mode <mode>    Set persistent mode\n"
+            printf "       ask --status             Show current configuration\n"
+            exit 0 ;;
+        --set-mode)
+            mkdir -p "$(dirname "$MODE_FILE")"
+            echo "$2" > "$MODE_FILE"
+            printf "Mode set to: %s\n" "$2"
+            exit 0 ;;
+        --status)
+            printf "Backend:  %s\n" "$BACKEND"
+            printf "Model:    %s\n" "$OLLAMA_MODEL"
+            printf "Mode:     %s\n" "$MODE"
+            printf "Endpoint: %s\n" "$OLLAMA_HOST"
+            exit 0 ;;
+        *) break ;;
+    esac
+done
 
 # ── Safety classification ──────────────────────────────────
 DANGEROUS_WORDS="sudo rm.-rf rm.-r dd.if= mkfs fdisk parted chmod.-R.777"
@@ -63,9 +100,25 @@ C_YEL='\033[0;33m'      # Yellow — copy
 C_RST='\033[0m'         # Reset
 
 # ── System prompt ──────────────────────────────────────────
+get_mode_instruction() {
+    case "$MODE" in
+        guided)
+            echo "INTERACTION MODE: Guided. Explain every concept in simple terms. Use analogies to physical-world concepts. After showing the command, explain what each part does. Suggest what the user might want to do next."
+            ;;
+        assisted)
+            echo "INTERACTION MODE: Assisted. Show the command first, then a brief one-line explanation. Do not over-explain."
+            ;;
+        direct)
+            echo "INTERACTION MODE: Direct. Respond with only the COMMAND/EXPLAIN/RISK format. Minimal explanation. No preamble. Maximum efficiency."
+            ;;
+    esac
+}
+
 get_system_prompt() {
+    local mode_instruction
+    mode_instruction=$(get_mode_instruction)
     if [[ -f "$SYSTEM_PROMPT_FILE" ]]; then
-        cat "$SYSTEM_PROMPT_FILE"
+        printf '%s\n\n%s' "$(cat "$SYSTEM_PROMPT_FILE")" "$mode_instruction"
     else
         echo 'You are a Linux terminal assistant for Collet OS (Fedora Atomic base).
 Respond with EXACTLY this format:
