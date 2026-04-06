@@ -77,7 +77,6 @@ modules:
         - podman.socket
         - fwupd-refresh.timer
         - sshd.service
-        - xrdp.service
       disabled:
         - NetworkManager-wait-online.service
 
