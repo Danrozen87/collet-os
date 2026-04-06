@@ -1,0 +1,18 @@
+# Collet OS — Privacy Defaults
+# Sovereign by default. Nothing phones home.
+
+[org/gnome/desktop/privacy]
+remember-recent-files=true
+recent-files-max-age=30
+remove-old-trash-files=true
+remove-old-temp-files=true
+old-files-age=30
+
+[org/gnome/desktop/search-providers]
+disable-external=false
+
+[org/gnome/system/location]
+enabled=false
+
+[org/gnome/desktop/notifications]
+show-in-lock-screen=false
