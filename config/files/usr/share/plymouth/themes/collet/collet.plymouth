@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Collet OS
+Description=Minimal boot splash for Collet OS
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/collet
+ScriptFile=/usr/share/plymouth/themes/collet/collet.script
