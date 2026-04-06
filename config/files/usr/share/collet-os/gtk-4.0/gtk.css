@@ -1,0 +1,413 @@
+/* Collet OS — System-wide GTK4/libadwaita Theme Override
+ *
+ * This single file defines the visual identity of the entire desktop.
+ * Loaded by every GTK4 application via /etc/gtk-4.0/settings.ini
+ * or user override at ~/.config/gtk-4.0/gtk.css
+ *
+ * Design language:
+ * - Zero-chroma dark neutrals (pure greys, no color cast)
+ * - Warm muted light mode (hue 90, minimal chroma)
+ * - Layered surfaces for elevation hierarchy
+ * - Generous rounding (12-16px)
+ * - Spring-inspired transitions (overshooting ease curves)
+ * - Subtle borders at 6-8% white opacity
+ * - Low cognitive strain: spacing > decoration
+ */
+
+/* ── Spring Animation Curve ────────────────────────────────
+ * Approximates a damped spring: slight overshoot then settle.
+ * Used for all interactive transitions.
+ */
+@define-color collet_spring_curve cubic-bezier(0.34, 1.56, 0.64, 1);
+
+/* ── Dark Mode Colors (from Collet Design System) ──────── */
+@define-color collet_bg_dark #252525;
+@define-color collet_surface_dark #2f2f2f;
+@define-color collet_surface_raised_dark #373737;
+@define-color collet_surface_overlay_dark #404040;
+@define-color collet_text_dark #e0e0e0;
+@define-color collet_text_secondary_dark #adadad;
+@define-color collet_text_muted_dark #858585;
+@define-color collet_border_dark rgba(255,255,255,0.06);
+@define-color collet_border_hover_dark rgba(255,255,255,0.10);
+@define-color collet_primary_dark #808080;
+@define-color collet_destructive_dark #c45c5c;
+@define-color collet_success_dark #5cac5c;
+@define-color collet_warning_dark #c4a050;
+@define-color collet_info_dark #5c8cb8;
+
+/* ── Light Mode Colors ─────────────────────────────────── */
+@define-color collet_bg_light #f2f1ee;
+@define-color collet_surface_light #ffffff;
+@define-color collet_surface_raised_light #ffffff;
+@define-color collet_text_light #454340;
+@define-color collet_text_secondary_light #6b6865;
+@define-color collet_border_light rgba(0,0,0,0.08);
+
+/* ══════════════════════════════════════════════════════════
+ * WINDOW & SURFACE ROUNDING
+ * ══════════════════════════════════════════════════════════ */
+
+/* Main windows */
+window,
+window.background {
+    border-radius: 12px;
+}
+
+/* Dialogs and popovers — more rounded */
+window.dialog,
+window.messagedialog,
+popover > contents {
+    border-radius: 16px;
+}
+
+/* Tooltip */
+tooltip {
+    border-radius: 8px;
+}
+
+/* ══════════════════════════════════════════════════════════
+ * HEADER BAR (title bar)
+ * ══════════════════════════════════════════════════════════ */
+
+headerbar {
+    min-height: 40px;
+    border-radius: 12px 12px 0 0;
+    border-bottom: 1px solid @collet_border_dark;
+    transition: all 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+headerbar .title {
+    font-family: "Geist";
+    font-weight: 500;
+    font-size: 13px;
+}
+
+/* Window controls (minimize, maximize, close) */
+windowcontrols > button {
+    min-width: 14px;
+    min-height: 14px;
+    border-radius: 50%;
+    margin: 0 3px;
+    transition: all 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+windowcontrols > button:hover {
+    transform: scale(1.1);
+}
+
+/* ══════════════════════════════════════════════════════════
+ * BUTTONS
+ * ══════════════════════════════════════════════════════════ */
+
+button {
+    border-radius: 10px;
+    padding: 6px 16px;
+    min-height: 28px;
+    transition: all 180ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 1px solid @collet_border_dark;
+}
+
+button:hover {
+    border-color: @collet_border_hover_dark;
+}
+
+button:active {
+    transform: scale(0.97);
+    transition: all 80ms ease-out;
+}
+
+button.suggested-action {
+    border-radius: 10px;
+}
+
+button.destructive-action {
+    border-radius: 10px;
+}
+
+button.flat {
+    border: none;
+    border-radius: 8px;
+}
+
+button.circular {
+    border-radius: 50%;
+}
+
+/* ══════════════════════════════════════════════════════════
+ * TEXT ENTRIES & SEARCH
+ * ══════════════════════════════════════════════════════════ */
+
+entry,
+searchentry,
+spinbutton {
+    border-radius: 10px;
+    border: 1px solid @collet_border_dark;
+    padding: 6px 12px;
+    min-height: 28px;
+    transition: border-color 200ms cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+entry:focus,
+searchentry:focus,
+spinbutton:focus {
+    border-color: rgba(255,255,255,0.15);
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.04);
+}
+
+/* ══════════════════════════════════════════════════════════
+ * LISTS & ROWS
+ * ══════════════════════════════════════════════════════════ */
+
+list,
+listview {
+    border-radius: 12px;
+}
+
+list > row,
+listview > row {
+    border-radius: 10px;
+    margin: 1px 4px;
+    padding: 4px 8px;
+    transition: background-color 150ms ease;
+}
+
+/* Boxed lists (settings panels) */
+list.boxed-list {
+    border-radius: 12px;
+    border: 1px solid @collet_border_dark;
+}
+
+list.boxed-list > row {
+    border-radius: 0;
+    margin: 0;
+}
+
+list.boxed-list > row:first-child {
+    border-radius: 12px 12px 0 0;
+}
+
+list.boxed-list > row:last-child {
+    border-radius: 0 0 12px 12px;
+}
+
+list.boxed-list > row:only-child {
+    border-radius: 12px;
+}
+
+/* ══════════════════════════════════════════════════════════
+ * SWITCHES & CHECKBOXES
+ * ══════════════════════════════════════════════════════════ */
+
+switch {
+    border-radius: 14px;
+    min-height: 24px;
+    min-width: 44px;
+    transition: all 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+switch slider {
+    border-radius: 50%;
+    min-width: 18px;
+    min-height: 18px;
+    transition: all 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+checkbutton check,
+radiobutton radio {
+    border-radius: 6px;
+    transition: all 180ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+radiobutton radio {
+    border-radius: 50%;
+}
+
+/* ══════════════════════════════════════════════════════════
+ * SCROLLBARS
+ * ══════════════════════════════════════════════════════════ */
+
+scrollbar slider {
+    border-radius: 99px;
+    min-width: 6px;
+    min-height: 6px;
+    background-color: rgba(255,255,255,0.12);
+    transition: all 200ms ease;
+}
+
+scrollbar slider:hover {
+    min-width: 8px;
+    background-color: rgba(255,255,255,0.20);
+}
+
+scrollbar.overlay-indicator slider {
+    min-width: 4px;
+}
+
+/* ══════════════════════════════════════════════════════════
+ * TABS & NOTEBOOKS
+ * ══════════════════════════════════════════════════════════ */
+
+tabbar tab {
+    border-radius: 8px;
+    transition: all 180ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+notebook > header > tabs > tab {
+    border-radius: 8px 8px 0 0;
+}
+
+/* ══════════════════════════════════════════════════════════
+ * POPOVERS & MENUS
+ * ══════════════════════════════════════════════════════════ */
+
+popover > contents {
+    border-radius: 14px;
+    border: 1px solid @collet_border_dark;
+    padding: 6px;
+}
+
+popover > contents modelbutton,
+popover > contents .model {
+    border-radius: 8px;
+    padding: 6px 10px;
+    transition: all 120ms ease;
+}
+
+menu {
+    border-radius: 12px;
+    padding: 6px;
+}
+
+menu menuitem {
+    border-radius: 8px;
+    padding: 6px 10px;
+    transition: all 120ms ease;
+}
+
+/* ══════════════════════════════════════════════════════════
+ * SIDEBAR & NAVIGATION
+ * ══════════════════════════════════════════════════════════ */
+
+.navigation-sidebar row {
+    border-radius: 8px;
+    margin: 1px 6px;
+    padding: 6px 10px;
+    transition: all 150ms ease;
+}
+
+placessidebar row {
+    border-radius: 8px;
+    margin: 1px 6px;
+}
+
+/* ══════════════════════════════════════════════════════════
+ * PROGRESS & SCALES
+ * ══════════════════════════════════════════════════════════ */
+
+progressbar trough,
+scale trough {
+    border-radius: 99px;
+    min-height: 4px;
+}
+
+progressbar progress {
+    border-radius: 99px;
+    transition: all 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+scale slider {
+    border-radius: 50%;
+    min-width: 18px;
+    min-height: 18px;
+    transition: all 180ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+scale slider:hover {
+    transform: scale(1.15);
+}
+
+/* ══════════════════════════════════════════════════════════
+ * INFO BARS & TOASTS
+ * ══════════════════════════════════════════════════════════ */
+
+infobar {
+    border-radius: 10px;
+}
+
+.osd,
+toast {
+    border-radius: 99px;
+    border: 1px solid @collet_border_dark;
+}
+
+/* ══════════════════════════════════════════════════════════
+ * CARDS & CLAMPS (content containers)
+ * ══════════════════════════════════════════════════════════ */
+
+.card {
+    border-radius: 14px;
+    border: 1px solid @collet_border_dark;
+    transition: all 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.card:hover {
+    border-color: @collet_border_hover_dark;
+}
+
+/* ══════════════════════════════════════════════════════════
+ * FOCUS RING
+ * ══════════════════════════════════════════════════════════ */
+
+*:focus-visible {
+    outline-color: rgba(255,255,255,0.15);
+    outline-offset: 2px;
+    outline-width: 2px;
+    outline-style: solid;
+    border-radius: inherit;
+}
+
+/* ══════════════════════════════════════════════════════════
+ * TYPOGRAPHY
+ * ══════════════════════════════════════════════════════════ */
+
+* {
+    font-family: "Geist", "Inter", system-ui, sans-serif;
+}
+
+.monospace,
+.terminal,
+textview.monospace {
+    font-family: "Geist Mono", "JetBrains Mono", monospace;
+}
+
+.title-1 { font-weight: 600; }
+.title-2 { font-weight: 600; }
+.title-3 { font-weight: 500; }
+.title-4 { font-weight: 500; }
+
+.dim-label,
+.subtitle {
+    opacity: 0.55;
+}
+
+/* ══════════════════════════════════════════════════════════
+ * GLOBAL TRANSITIONS
+ * All interactive elements get the spring-inspired curve.
+ * ══════════════════════════════════════════════════════════ */
+
+button,
+switch,
+entry,
+searchentry,
+row,
+.card,
+scale slider,
+checkbutton check,
+radiobutton radio,
+tabbar tab,
+headerbar,
+.navigation-sidebar row {
+    transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}

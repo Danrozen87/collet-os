@@ -51,6 +51,14 @@ if [ -d "/usr/share/fonts/collet" ] && [ ! -d "$HOME/.local/share/fonts" ]; then
     fc-cache -f 2>/dev/null || true
 fi
 
+# Install Collet GTK4 theme to user config
+GTK_CSS="/usr/share/collet-os/gtk-4.0/gtk.css"
+USER_GTK="$HOME/.config/gtk-4.0/gtk.css"
+if [ -f "$GTK_CSS" ] && [ ! -f "$USER_GTK" ]; then
+    mkdir -p "$(dirname "$USER_GTK")"
+    cp "$GTK_CSS" "$USER_GTK"
+fi
+
 # Log first boot
 bash "$AUDIT_SRC" SYSTEM FIRST_BOOT "Collet OS initialized" 2>/dev/null || true
 
