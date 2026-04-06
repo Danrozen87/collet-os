@@ -26,6 +26,9 @@ picture-uri='file:///usr/share/backgrounds/collet/default-dark.png'
 
 [org/gnome/desktop/wm/preferences]
 button-layout='appmenu:minimize,maximize,close'
+action-double-click-titlebar='toggle-maximize'
+action-middle-click-titlebar='none'
+titlebar-font='Geist Medium 11'
 
 [org/gnome/mutter]
 center-new-windows=true
