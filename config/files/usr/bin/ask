@@ -10,13 +10,16 @@ set -euo pipefail
 # ── Configuration ──────────────────────────────────────────
 CONFIG_SYS="/usr/share/collet-os/ai/backend.toml"
 CONFIG_USER="${XDG_CONFIG_HOME:-$HOME/.config}/collet-os/ai/backend.toml"
-SYSTEM_PROMPT_FILE="/usr/share/collet-os/ai/system-prompt-terminal.md"
+SYSTEM_PROMPT_FILE=""
+for _p in "/usr/share/collet-os/ai/system-prompt-terminal.md" "/var/lib/collet-os/ai/system-prompt-terminal.md"; do
+    [[ -f "$_p" ]] && SYSTEM_PROMPT_FILE="$_p" && break
+done
 MODE_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/collet-os/ai/mode"
 
 # Defaults (overridden by config)
 BACKEND="ollama"
 OLLAMA_HOST="http://localhost:11434"
-OLLAMA_MODEL="collet-assistant"
+OLLAMA_MODEL="llama3.2:3b"
 CLAUDE_ENDPOINT="https://api.anthropic.com"
 CLAUDE_MODEL="claude-sonnet-4-20250514"
 OPENAI_ENDPOINT="https://api.openai.com"
@@ -216,10 +219,10 @@ main() {
     # Normalize: strip backticks, and split COMMAND/EXPLAIN/RISK onto separate lines
     response=$(echo "$response" | sed 's/`//g' | sed 's/EXPLAIN:/\nEXPLAIN:/gI' | sed 's/RISK:/\nRISK:/gI' | sed 's/COMMAND:/\nCOMMAND:/gI' | sed '/^$/d')
 
-    # Try structured format first
-    cmd=$(echo "$response" | grep -iP '^\s*COMMAND:\s' | head -1 | sed 's/^[[:space:]]*[Cc][Oo][Mm][Mm][Aa][Nn][Dd]:[[:space:]]*//' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-    explain=$(echo "$response" | grep -iP '^\s*EXPLAIN:\s' | head -1 | sed 's/^[[:space:]]*[Ee][Xx][Pp][Ll][Aa][Ii][Nn]:[[:space:]]*//')
-    risk=$(echo "$response" | grep -iP '^\s*RISK:\s' | head -1 | sed 's/^[[:space:]]*[Rr][Ii][Ss][Kk]:[[:space:]]*//' | tr '[:upper:]' '[:lower:]')
+    # Try structured format first (|| true prevents set -e from killing on no match)
+    cmd=$(echo "$response" | grep -iP '^\s*COMMAND:\s' | head -1 | sed 's/^[[:space:]]*[Cc][Oo][Mm][Mm][Aa][Nn][Dd]:[[:space:]]*//' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' || true)
+    explain=$(echo "$response" | grep -iP '^\s*EXPLAIN:\s' | head -1 | sed 's/^[[:space:]]*[Ee][Xx][Pp][Ll][Aa][Ii][Nn]:[[:space:]]*//' || true)
+    risk=$(echo "$response" | grep -iP '^\s*RISK:\s' | head -1 | sed 's/^[[:space:]]*[Rr][Ii][Ss][Kk]:[[:space:]]*//' | tr '[:upper:]' '[:lower:]' || true)
 
     # Fallback: if no COMMAND: prefix, check if first line looks like a command
     if [[ -z "$cmd" ]]; then
@@ -228,9 +231,9 @@ main() {
         # If first line starts with a common command or path, treat it as the command
         if echo "$first_line" | grep -qE '^(sudo |/|ls |find |grep |df |du |cat |head |tail |mkdir |mv |cp |rm |chmod |chown |systemctl |flatpak |rpm-ostree |ollama |curl |wget |pip |npm |git |docker |podman )'; then
             cmd="$first_line"
-            explain=$(echo "$response" | sed '1d' | grep -iP '^\s*EXPLAIN:\s' | head -1 | sed 's/^[[:space:]]*[Ee][Xx][Pp][Ll][Aa][Ii][Nn]:[[:space:]]*//')
-            [[ -z "$explain" ]] && explain=$(echo "$response" | sed '1d' | head -1)
-            risk=$(echo "$response" | grep -iP '^\s*RISK:\s' | head -1 | sed 's/^[[:space:]]*[Rr][Ii][Ss][Kk]:[[:space:]]*//' | tr '[:upper:]' '[:lower:]')
+            explain=$(echo "$response" | sed '1d' | grep -iP '^\s*EXPLAIN:\s' | head -1 | sed 's/^[[:space:]]*[Ee][Xx][Pp][Ll][Aa][Ii][Nn]:[[:space:]]*//' || true)
+            [[ -z "$explain" ]] && explain=$(echo "$response" | sed '1d' | head -1 || true)
+            risk=$(echo "$response" | grep -iP '^\s*RISK:\s' | head -1 | sed 's/^[[:space:]]*[Rr][Ii][Ss][Kk]:[[:space:]]*//' | tr '[:upper:]' '[:lower:]' || true)
         fi
     fi
 
