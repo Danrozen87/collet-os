@@ -31,13 +31,9 @@ modules:
       - curl
       - git
 
-    remove:
-      # Remove Firefox RPM — we ship Flatpak Chromium
-      - firefox
-      - firefox-langpacks
-      # Remove Fedora branding
-      - fedora-logos
-      - fedora-logos-httpd
+    # Remove packages only if they exist in the COSMIC base image
+    # COSMIC is a minimal image — most GNOME bloat is already absent
+    remove: []
 
   # ── Default Flatpak applications ─────────────────────────
   # COSMIC ships: Files, Terminal, Edit, Settings, Store, Calculator
