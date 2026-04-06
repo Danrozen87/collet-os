@@ -1,0 +1,66 @@
+/* Collet OS — GTK4/libadwaita Color Overrides
+ * Derived from Collet Design System (OKLCH color space)
+ *
+ * These override libadwaita defaults to match
+ * the Collet visual language.
+ *
+ * Light mode: warm muted tones (hue 90, chroma 0.003-0.005)
+ * Dark mode: pure neutral greys (zero chroma, elevation stack)
+ */
+
+/* ── Dark Mode (default) ────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* Surfaces — elevation stack */
+        --collet-bg:              oklch(0.145 0.000 0.0);
+        --collet-surface:         oklch(0.185 0.000 0.0);
+        --collet-surface-raised:  oklch(0.215 0.000 0.0);
+        --collet-surface-overlay: oklch(0.250 0.000 0.0);
+
+        /* Text */
+        --collet-text:            oklch(0.880 0.000 0.0);
+        --collet-text-secondary:  oklch(0.680 0.000 0.0);
+        --collet-text-muted:      oklch(0.520 0.000 0.0);
+
+        /* Interactive */
+        --collet-primary:         oklch(0.500 0.000 0.0);
+        --collet-primary-hover:   oklch(0.545 0.000 0.0);
+
+        /* Borders */
+        --collet-border:          oklch(0.290 0.000 0.0);
+
+        /* Semantic */
+        --collet-destructive:     oklch(0.580 0.095 25.0);
+        --collet-success:         oklch(0.580 0.075 145.0);
+        --collet-warning:         oklch(0.690 0.100 75.0);
+        --collet-info:            oklch(0.600 0.080 250.0);
+    }
+}
+
+/* ── Light Mode ─────────────────────────────────────────── */
+@media (prefers-color-scheme: light) {
+    :root {
+        /* Surfaces — warm muted */
+        --collet-bg:              oklch(0.955 0.005 90.0);
+        --collet-surface:         oklch(1.000 0.000 0.0);
+        --collet-surface-raised:  oklch(1.000 0.000 0.0);
+
+        /* Text */
+        --collet-text:            oklch(0.270 0.003 90.0);
+        --collet-text-secondary:  oklch(0.420 0.003 90.0);
+        --collet-text-muted:      oklch(0.570 0.003 90.0);
+
+        /* Interactive */
+        --collet-primary:         oklch(0.355 0.003 90.0);
+        --collet-primary-hover:   oklch(0.300 0.003 90.0);
+
+        /* Borders */
+        --collet-border:          oklch(0.870 0.003 90.0);
+
+        /* Semantic */
+        --collet-destructive:     oklch(0.535 0.095 25.0);
+        --collet-success:         oklch(0.535 0.075 145.0);
+        --collet-warning:         oklch(0.650 0.100 75.0);
+        --collet-info:            oklch(0.555 0.080 250.0);
+    }
+}

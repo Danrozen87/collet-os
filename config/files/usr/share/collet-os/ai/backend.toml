@@ -1,0 +1,50 @@
+# Collet OS — AI Backend Configuration
+# This file defines which AI backend is used.
+# Users and organizations can override in ~/.config/collet-os/ai/backend.toml
+
+# ── Backend Selection ──────────────────────────────────────
+# type: "ollama" | "claude" | "mistral" | "openai" | "custom"
+[backend]
+type = "ollama"
+
+# ── Local Backend (default) ────────────────────────────────
+[backend.ollama]
+endpoint = "http://localhost:11434"
+model = "collet-assistant"
+
+# ── Claude API (opt-in) ───────────────────────────────────
+# [backend.claude]
+# endpoint = "https://api.anthropic.com"
+# api_key_source = "keyring"   # Uses system keyring, never plaintext
+# model = "claude-sonnet-4-20250514"
+
+# ── Mistral API (EU cloud, opt-in) ────────────────────────
+# [backend.mistral]
+# endpoint = "https://api.mistral.ai"
+# api_key_source = "keyring"
+# model = "mistral-small-latest"
+
+# ── On-Premises Server (organization LAN) ─────────────────
+# [backend.ollama]
+# endpoint = "http://ai-server.internal:11434"
+# model = "mistral:7b"
+
+# ── Cloud Privacy Filters ─────────────────────────────────
+# Applied when using any cloud backend. Ignored for local.
+[cloud.privacy]
+strip_hostnames = true
+strip_file_paths = true
+strip_usernames = true
+strip_ip_addresses = true
+send_system_info = false
+send_file_contents = false
+audit_cloud_requests = true
+
+# ── Interaction ────────────────────────────────────────────
+[interaction]
+mode = "guided"   # "guided" | "assisted" | "direct"
+language = "auto"  # "auto" detects from user input
+
+# ── Telemetry ──────────────────────────────────────────────
+[telemetry]
+enabled = false    # Explicit opt-in only. Never default to true.

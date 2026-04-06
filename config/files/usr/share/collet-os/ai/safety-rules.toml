@@ -1,0 +1,74 @@
+# Collet OS — AI Safety Rules
+# Command classification for the AI execution layer.
+# These rules are enforced regardless of backend or mode.
+
+# ── Safe Commands ──────────────────────────────────────────
+# Execute in sandbox without approval.
+[safe]
+commands = [
+    "ls", "cat", "head", "tail", "less",
+    "df", "du", "free", "uptime", "whoami", "date", "uname",
+    "systemctl status *",
+    "journalctl --no-pager *",
+    "ip addr show", "ip route show",
+    "flatpak list", "flatpak info *",
+    "rpm-ostree status",
+    "nmcli general status", "nmcli device status",
+    "hostnamectl",
+    "timedatectl",
+    "lsblk", "lscpu", "lspci", "lsusb",
+    "gsettings get *",
+    "cat /etc/os-release",
+    "ollama list",
+]
+
+# ── Moderate Commands ──────────────────────────────────────
+# Show to user and require approval before executing.
+[moderate]
+commands = [
+    "flatpak install *",
+    "flatpak remove *",
+    "flatpak update *",
+    "gsettings set *",
+    "systemctl restart *",
+    "nmcli connection modify *",
+    "nmcli connection up *",
+    "cp *", "mv *", "mkdir *",
+    "ollama pull *",
+    "ollama run *",
+]
+
+# ── Dangerous Commands ─────────────────────────────────────
+# Strong warning + approval + snapshot before executing.
+[dangerous]
+commands = [
+    "rpm-ostree install *",
+    "rpm-ostree override *",
+    "rpm-ostree uninstall *",
+    "systemctl enable *",
+    "systemctl disable *",
+    "systemctl stop *",
+    "firewall-cmd *",
+    "passwd *",
+    "chown *", "chmod *",
+    "rm *",
+    "nmcli connection delete *",
+]
+
+# ── Forbidden Commands ─────────────────────────────────────
+# Never execute. Refuse and explain why.
+[forbidden]
+patterns = [
+    "rm -rf /",
+    "rm -rf /*",
+    "dd if=* of=/dev/*",
+    "mkfs.*",
+    "> /dev/sd*",
+    "chmod -R 777 /",
+    ":(){:|:&};:",
+    "curl * | sh",
+    "curl * | bash",
+    "wget * | sh",
+    "wget * | bash",
+    "python -c * import os",
+]

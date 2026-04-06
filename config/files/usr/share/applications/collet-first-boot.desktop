@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Collet OS Setup
+Exec=/usr/share/collet-os/first-boot.sh
+X-GNOME-Autostart-enabled=true
+NoDisplay=true
