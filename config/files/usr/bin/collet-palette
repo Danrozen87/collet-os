@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-# Collet OS — Command Palette launcher
-exec python3 /usr/share/collet-os/palette/palette.py "$@"

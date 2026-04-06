@@ -1,11 +1,12 @@
 # Collet OS — BlueBuild Recipe
 # EU-sovereign, AI-integrated Linux desktop
+# Built on COSMIC Desktop (Rust-native compositor)
 # https://blue-build.org/reference/recipe/
 
 name: collet-os
 description: Collet OS — AI-powered sovereign desktop
-base-image: ghcr.io/ublue-os/silverblue-main
-image-version: gts
+base-image: ghcr.io/blue-build/base-images/fedora-cosmic
+image-version: latest
 
 modules:
   # ── System packages ──────────────────────────────────────
@@ -15,17 +16,13 @@ modules:
       - distrobox
       - podman-compose
 
-      # Desktop polish
-      - gnome-tweaks
-      - gnome-shell-extension-appindicator
-      - gnome-shell-extension-dash-to-panel
-      - wl-clipboard
-
       # System tools
       - htop
       - fastfetch
+      - wl-clipboard
+      - jq
 
-      # Remote access (for server/dev deployments)
+      # Remote access (server/dev deployments)
       - openssh-server
       - xrdp
       - xorgxrdp
@@ -35,43 +32,33 @@ modules:
       - git
 
     remove:
-      # Remove Firefox RPM — we ship Flatpak Chromium instead
+      # Remove Firefox RPM — we ship Flatpak Chromium
       - firefox
       - firefox-langpacks
       # Remove Fedora branding
-      - f42-backgrounds-base
-      - f42-backgrounds-gnome
-      - desktop-backgrounds-gnome
       - fedora-logos
       - fedora-logos-httpd
-      # Remove bloat — AI replaces help, enterprise doesn't need app store
-      - gnome-software
-      - gnome-tour
-      - yelp
-      - yelp-libs
-      - yelp-xsl
-      - rygel
 
   # ── Default Flatpak applications ─────────────────────────
+  # COSMIC ships: Files, Terminal, Edit, Settings, Store, Calculator
+  # We add only what COSMIC doesn't include
   - type: default-flatpaks
     configurations:
       - scope: system
         notify: true
         install:
-          # Browser — Chromium (open source, full Chrome compat, no Google sync)
+          # Browser
           - org.chromium.Chromium
           # Office
           - org.libreoffice.LibreOffice
           # Communication
           - org.signal.Signal
-          # Utilities
-          - org.gnome.Calculator
-          - org.gnome.Calendar
-          - org.gnome.TextEditor
-          - org.gnome.Loupe
-          - org.gnome.clocks
+          # Email
+          - org.mozilla.Thunderbird
           # Media
           - org.gnome.Showtime
+          # Image viewer (if COSMIC doesn't ship one)
+          - org.gnome.Loupe
 
   # ── Copy system configuration files ──────────────────────
   - type: files
@@ -86,7 +73,7 @@ modules:
     scripts:
       - 01-branding.sh
       - 02-ai-layer.sh
-      - 03-gnome-defaults.sh
+      - 03-cosmic-defaults.sh
 
   # ── Systemd service configuration ────────────────────────
   - type: systemd

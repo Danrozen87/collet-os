@@ -305,10 +305,8 @@ main() {
             fi
             printf "  ${C_DIM}> %s${C_RST}\n\n" "$cmd"
 
-            # Log to audit trail
-            local audit_dir="${XDG_DATA_HOME:-$HOME/.local/share}/collet-os/audit"
-            mkdir -p "$audit_dir"
-            printf '%s | ASK | %s | %s | %s\n' "$(date -Iseconds)" "$query" "$cmd" "$risk" >> "$audit_dir/ask.log"
+            # Log to systemd journal
+            logger -t collet -p user.info "AI | ASK_EXECUTE | $cmd | risk=$risk | query=$query"
 
             eval "$cmd"
             ;;
