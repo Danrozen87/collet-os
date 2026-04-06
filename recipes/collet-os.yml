@@ -25,6 +25,11 @@ modules:
       - htop
       - fastfetch
 
+      # Remote access (for server/dev deployments)
+      - openssh-server
+      - xrdp
+      - xorgxrdp
+
       # AI runtime dependencies
       - curl
       - git
@@ -77,6 +82,8 @@ modules:
         - podman.socket
         - fwupd-refresh.timer
         - rpm-ostreed-automatic.timer
+        - sshd.service
+        - xrdp.service
       disabled:
         - NetworkManager-wait-online.service
 
