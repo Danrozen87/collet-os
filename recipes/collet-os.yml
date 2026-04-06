@@ -24,8 +24,7 @@ modules:
 
       # Remote access (server/dev deployments)
       - openssh-server
-      - xrdp
-      - xorgxrdp
+      - wayvnc
 
       # AI runtime dependencies
       - curl
