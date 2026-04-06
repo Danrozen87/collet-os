@@ -77,7 +77,6 @@ modules:
       enabled:
         - podman.socket
         - fwupd-refresh.timer
-        - rpm-ostreed-automatic.timer
         - sshd.service
         - xrdp.service
       disabled:
