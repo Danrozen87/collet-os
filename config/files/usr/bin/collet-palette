@@ -1,4 +1,3 @@
 #!/usr/bin/env bash
 # Collet OS — Command Palette launcher
-# Toggles the palette window. Bind Super+Space to this script.
-exec python3 /usr/share/collet-os/collet-palette/collet-palette.py "$@"
+exec python3 /usr/share/collet-os/palette/palette.py "$@"
