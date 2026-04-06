@@ -38,6 +38,12 @@ modules:
       # Remove Firefox RPM — we ship Flatpak Firefox instead
       - firefox
       - firefox-langpacks
+      # Remove Fedora branding — replaced by Collet OS assets
+      - f42-backgrounds-base
+      - f42-backgrounds-gnome
+      - desktop-backgrounds-gnome
+      - fedora-logos
+      - fedora-logos-httpd
 
   # ── Default Flatpak applications ─────────────────────────
   - type: default-flatpaks
