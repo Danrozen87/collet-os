@@ -1,0 +1,10 @@
+# Collet OS — Custom Keybindings
+# Super+Space opens the Command Palette
+
+[org/gnome/settings-daemon/plugins/media-keys]
+custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/collet-palette/']
+
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/collet-palette]
+name='Collet Palette'
+command='collet-palette'
+binding='<Super>space'

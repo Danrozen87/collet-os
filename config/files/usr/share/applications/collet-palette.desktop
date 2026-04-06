@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Collet Palette
+Comment=Search apps, files, or ask AI
+Exec=collet-palette
+Icon=system-search
+NoDisplay=true
+Categories=Utility;
