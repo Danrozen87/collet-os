@@ -1,0 +1,247 @@
+#!/usr/bin/env bash
+# Collet OS — Terminal AI Helper
+# Usage: ask <question>    or    ? <question> (bash)
+# Backend-agnostic: works with Ollama, Claude API, OpenAI/Codex
+set -euo pipefail
+
+# ── Configuration ──────────────────────────────────────────
+CONFIG_SYS="/usr/share/collet-os/ai/backend.toml"
+CONFIG_USER="${XDG_CONFIG_HOME:-$HOME/.config}/collet-os/ai/backend.toml"
+SYSTEM_PROMPT_FILE="/usr/share/collet-os/ai/system-prompt-terminal.md"
+
+# Defaults (overridden by config)
+BACKEND="ollama"
+OLLAMA_HOST="http://localhost:11434"
+OLLAMA_MODEL="collet-assistant"
+CLAUDE_ENDPOINT="https://api.anthropic.com"
+CLAUDE_MODEL="claude-sonnet-4-20250514"
+OPENAI_ENDPOINT="https://api.openai.com"
+OPENAI_MODEL="gpt-4o-mini"
+API_KEY=""
+
+# ── Parse config ───────────────────────────────────────────
+read_config() {
+    local file="$1"
+    [[ -f "$file" ]] || return 0
+    BACKEND=$(grep -oP '(?<=^type\s*=\s*")([^"]+)' "$file" 2>/dev/null || echo "$BACKEND")
+    OLLAMA_HOST=$(grep -oP '(?<=^endpoint\s*=\s*")([^"]+)' "$file" 2>/dev/null || echo "$OLLAMA_HOST")
+    OLLAMA_MODEL=$(grep -oP '(?<=^model\s*=\s*")([^"]+)' "$file" 2>/dev/null || echo "$OLLAMA_MODEL")
+    API_KEY=$(grep -oP '(?<=^api_key\s*=\s*")([^"]+)' "$file" 2>/dev/null || echo "$API_KEY")
+}
+
+read_config "$CONFIG_SYS"
+read_config "$CONFIG_USER"  # User config overrides system
+
+# ── Safety classification ──────────────────────────────────
+DANGEROUS_WORDS="sudo rm.-rf rm.-r dd.if= mkfs fdisk parted chmod.-R.777"
+MODERATE_WORDS="mv cp chmod chown rpm-ostree flatpak.install flatpak.remove systemctl.start systemctl.stop systemctl.restart systemctl.enable systemctl.disable firewall-cmd"
+
+classify_risk() {
+    local cmd="$1"
+    local word
+    for word in $DANGEROUS_WORDS; do
+        if echo "$cmd" | grep -qiE "$word"; then
+            echo "dangerous"
+            return
+        fi
+    done
+    for word in $MODERATE_WORDS; do
+        if echo "$cmd" | grep -qiE "$word"; then
+            echo "moderate"
+            return
+        fi
+    done
+    echo "safe"
+}
+
+# ── Terminal colors ────────────────────────────────────────
+C_CMD='\033[1;36m'      # Bold cyan — command
+C_DIM='\033[0;90m'      # Dim gray — explanation
+C_WARN='\033[0;31m'     # Red — danger
+C_OK='\033[0;32m'       # Green — safe/run
+C_YEL='\033[0;33m'      # Yellow — copy
+C_RST='\033[0m'         # Reset
+
+# ── System prompt ──────────────────────────────────────────
+get_system_prompt() {
+    if [[ -f "$SYSTEM_PROMPT_FILE" ]]; then
+        cat "$SYSTEM_PROMPT_FILE"
+    else
+        echo 'You are a Linux terminal assistant for Collet OS (Fedora Atomic base).
+Respond with EXACTLY this format:
+COMMAND: <the shell command>
+EXPLAIN: <one-line explanation of what it does>
+RISK: safe|moderate|dangerous
+
+Rules:
+- One command only (use && or pipes for multi-step)
+- No markdown, no backticks, no preamble
+- Use flatpak for app installs, rpm-ostree for system packages
+- If the question is conversational (not asking for a command), respond naturally without the COMMAND/EXPLAIN/RISK format'
+    fi
+}
+
+# ── API calls ──────────────────────────────────────────────
+build_payload() {
+    local model="$1" prompt="$2" query="$3"
+    jq -n \
+        --arg m "$model" \
+        --arg s "$prompt" \
+        --arg q "$query" \
+        '{model:$m, messages:[{role:"system",content:$s},{role:"user",content:$q}], temperature:0.2, max_tokens:300}'
+}
+
+call_ollama() {
+    local query="$1"
+    local prompt
+    prompt=$(get_system_prompt)
+    local payload
+    payload=$(build_payload "$OLLAMA_MODEL" "$prompt" "$query")
+    curl -sS "$OLLAMA_HOST/v1/chat/completions" \
+        -H "Content-Type: application/json" \
+        -d "$payload" 2>/dev/null | jq -r '.choices[0].message.content // empty'
+}
+
+call_claude() {
+    local query="$1"
+    local prompt
+    prompt=$(get_system_prompt)
+    jq -n \
+        --arg m "$CLAUDE_MODEL" \
+        --arg s "$prompt" \
+        --arg q "$query" \
+        '{model:$m, system:$s, messages:[{role:"user",content:$q}], max_tokens:300}' | \
+    curl -sS "$CLAUDE_ENDPOINT/v1/messages" \
+        -H "Content-Type: application/json" \
+        -H "x-api-key: $API_KEY" \
+        -H "anthropic-version: 2023-06-01" \
+        -d @- 2>/dev/null | jq -r '.content[0].text // empty'
+}
+
+call_openai() {
+    local query="$1"
+    local prompt
+    prompt=$(get_system_prompt)
+    local payload
+    payload=$(build_payload "$OPENAI_MODEL" "$prompt" "$query")
+    curl -sS "$OPENAI_ENDPOINT/v1/chat/completions" \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer $API_KEY" \
+        -d "$payload" 2>/dev/null | jq -r '.choices[0].message.content // empty'
+}
+
+call_backend() {
+    case "$BACKEND" in
+        ollama)  call_ollama "$1" ;;
+        claude)  call_claude "$1" ;;
+        openai|codex) call_openai "$1" ;;
+        *)       printf "${C_WARN}Unknown backend: %s${C_RST}\n" "$BACKEND"; return 1 ;;
+    esac
+}
+
+# ── Main ───────────────────────────────────────────────────
+main() {
+    local query="$*"
+    [[ -z "$query" ]] && { printf "Usage: ask <question>\n"; return 1; }
+
+    # Show thinking indicator
+    printf "${C_DIM}thinking...${C_RST}\r"
+
+    # Call backend
+    local response
+    response=$(call_backend "$query")
+
+    # Clear thinking indicator
+    printf '\033[2K\r'
+
+    # Empty response
+    [[ -z "$response" ]] && { printf "${C_WARN}No response. Is the AI backend running?${C_RST}\n"; return 1; }
+
+    # Parse structured response — handles both "COMMAND: x" and raw responses
+    local cmd explain risk
+
+    # Normalize: strip backticks, and split COMMAND/EXPLAIN/RISK onto separate lines
+    response=$(echo "$response" | sed 's/`//g' | sed 's/EXPLAIN:/\nEXPLAIN:/gI' | sed 's/RISK:/\nRISK:/gI' | sed 's/COMMAND:/\nCOMMAND:/gI' | sed '/^$/d')
+
+    # Try structured format first
+    cmd=$(echo "$response" | grep -iP '^\s*COMMAND:\s' | head -1 | sed 's/^[[:space:]]*[Cc][Oo][Mm][Mm][Aa][Nn][Dd]:[[:space:]]*//' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+    explain=$(echo "$response" | grep -iP '^\s*EXPLAIN:\s' | head -1 | sed 's/^[[:space:]]*[Ee][Xx][Pp][Ll][Aa][Ii][Nn]:[[:space:]]*//')
+    risk=$(echo "$response" | grep -iP '^\s*RISK:\s' | head -1 | sed 's/^[[:space:]]*[Rr][Ii][Ss][Kk]:[[:space:]]*//' | tr '[:upper:]' '[:lower:]')
+
+    # Fallback: if no COMMAND: prefix, check if first line looks like a command
+    if [[ -z "$cmd" ]]; then
+        local first_line
+        first_line=$(echo "$response" | head -1 | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+        # If first line starts with a common command or path, treat it as the command
+        if echo "$first_line" | grep -qE '^(sudo |/|ls |find |grep |df |du |cat |head |tail |mkdir |mv |cp |rm |chmod |chown |systemctl |flatpak |rpm-ostree |ollama |curl |wget |pip |npm |git |docker |podman )'; then
+            cmd="$first_line"
+            explain=$(echo "$response" | sed '1d' | grep -iP '^\s*EXPLAIN:\s' | head -1 | sed 's/^[[:space:]]*[Ee][Xx][Pp][Ll][Aa][Ii][Nn]:[[:space:]]*//')
+            [[ -z "$explain" ]] && explain=$(echo "$response" | sed '1d' | head -1)
+            risk=$(echo "$response" | grep -iP '^\s*RISK:\s' | head -1 | sed 's/^[[:space:]]*[Rr][Ii][Ss][Kk]:[[:space:]]*//' | tr '[:upper:]' '[:lower:]')
+        fi
+    fi
+
+    # If no structured response, it's a conversational answer
+    if [[ -z "$cmd" ]]; then
+        printf "\n${C_DIM}%s${C_RST}\n\n" "$response"
+        return 0
+    fi
+
+    # Override LLM risk with client-side classification (never trust the LLM for safety)
+    local verified_risk
+    verified_risk=$(classify_risk "$cmd")
+    [[ "$verified_risk" == "dangerous" ]] && risk="dangerous"
+    [[ "$verified_risk" == "moderate" && "$risk" == "safe" ]] && risk="moderate"
+
+    # Display
+    printf '\n'
+    printf "  ${C_CMD}%s${C_RST}\n" "$cmd"
+    [[ -n "$explain" ]] && printf "  ${C_DIM}%s${C_RST}\n" "$explain"
+
+    if [[ "$risk" == "dangerous" ]]; then
+        printf "  ${C_WARN}[!] destructive command — review carefully${C_RST}\n"
+    fi
+
+    # Action prompt (skip if not interactive terminal)
+    if [[ ! -t 0 ]]; then
+        printf '\n'
+        return 0
+    fi
+
+    printf "\n  ${C_OK}[r]${C_RST}un  ${C_YEL}[c]${C_RST}opy  ${C_DIM}[q]${C_RST}uit "
+    read -rsn1 action
+    printf '\n'
+
+    case "$action" in
+        r|R)
+            if [[ "$risk" == "dangerous" ]]; then
+                printf "  ${C_WARN}Confirm? [y/N]${C_RST} "
+                read -rsn1 confirm
+                printf '\n'
+                [[ "$confirm" != [yY] ]] && { printf "  ${C_DIM}Cancelled${C_RST}\n"; return 0; }
+            fi
+            printf "  ${C_DIM}> %s${C_RST}\n\n" "$cmd"
+
+            # Log to audit trail
+            local audit_dir="${XDG_DATA_HOME:-$HOME/.local/share}/collet-os/audit"
+            mkdir -p "$audit_dir"
+            printf '%s | ASK | %s | %s | %s\n' "$(date -Iseconds)" "$query" "$cmd" "$risk" >> "$audit_dir/ask.log"
+
+            eval "$cmd"
+            ;;
+        c|C)
+            if command -v wl-copy >/dev/null 2>&1; then
+                echo -n "$cmd" | wl-copy
+                printf "  ${C_OK}Copied to clipboard${C_RST}\n"
+            elif command -v xclip >/dev/null 2>&1; then
+                echo -n "$cmd" | xclip -selection clipboard
+                printf "  ${C_OK}Copied to clipboard${C_RST}\n"
+            else
+                printf "  ${C_DIM}%s${C_RST}\n" "$cmd"
+            fi
+            ;;
+        *) ;;
+    esac
+}
+
+main "$@"
