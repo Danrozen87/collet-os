@@ -7,10 +7,10 @@
 [org/gnome/desktop/interface]
 color-scheme='prefer-dark'
 gtk-theme='adw-gtk3-dark'
-icon-theme='Collet'
-font-name='Inter 11'
-document-font-name='Inter 11'
-monospace-font-name='JetBrains Mono 10'
+icon-theme='WhiteSur'
+font-name='Geist 11'
+document-font-name='Geist 11'
+monospace-font-name='Geist Mono 10'
 clock-format='24h'
 clock-show-weekday=true
 enable-animations=true
