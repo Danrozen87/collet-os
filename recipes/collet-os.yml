@@ -35,15 +35,23 @@ modules:
       - git
 
     remove:
-      # Remove Firefox RPM — we ship Flatpak Firefox instead
+      # Remove Firefox RPM — we ship Flatpak Chromium instead
       - firefox
       - firefox-langpacks
-      # Remove Fedora branding — replaced by Collet OS assets
+      # Remove Fedora branding
       - f42-backgrounds-base
       - f42-backgrounds-gnome
       - desktop-backgrounds-gnome
       - fedora-logos
       - fedora-logos-httpd
+      # Remove bloat — AI replaces help, enterprise doesn't need app store
+      - gnome-software
+      - gnome-tour
+      - yelp
+      - yelp-libs
+      - yelp-xsl
+      - rygel
+      - totem-pl-parser
 
   # ── Default Flatpak applications ─────────────────────────
   - type: default-flatpaks
@@ -51,8 +59,8 @@ modules:
       - scope: system
         notify: true
         install:
-          # Browser
-          - org.mozilla.firefox
+          # Browser — Chromium (open source, full Chrome compat, no Google sync)
+          - org.chromium.Chromium
           # Office
           - org.libreoffice.LibreOffice
           # Communication
@@ -63,10 +71,8 @@ modules:
           - org.gnome.TextEditor
           - org.gnome.Loupe
           - org.gnome.clocks
-          - com.mattjakeman.ExtensionManager
           # Media
           - org.gnome.Showtime
-          - io.bassi.Amberol
 
   # ── Copy system configuration files ──────────────────────
   - type: files
