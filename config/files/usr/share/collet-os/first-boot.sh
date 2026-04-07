@@ -208,7 +208,31 @@ echo "en" > "$HOME/.config/collet-os/ai/language"
 rm -rf "$HOME/.config/cosmic/com.system76.CosmicTheme.Dark/v1" 2>/dev/null || true
 rm -rf "$HOME/.config/cosmic/com.system76.CosmicTheme.Light/v1" 2>/dev/null || true
 
-# ── 12. Log and mark done ─────────────────────────────────
+# ── 12. Dock configuration — single dock, no top panel ────
+# Disable top panel, keep only dock at bottom
+PANEL_CFG="$HOME/.config/cosmic/com.system76.CosmicPanel/v1"
+mkdir -p "$PANEL_CFG"
+
+# Only one panel entry: the dock
+echo '["Dock"]' > "$PANEL_CFG/entries"
+
+# Dock config: compact, centered, subtle
+DOCK_CFG="$HOME/.config/cosmic/com.system76.CosmicPanel.Dock/v1"
+mkdir -p "$DOCK_CFG"
+echo '"Dock"' > "$DOCK_CFG/name"
+echo 'Bottom' > "$DOCK_CFG/anchor"
+echo 'false' > "$DOCK_CFG/anchor_gap"
+echo 'M' > "$DOCK_CFG/size"
+echo '0.85' > "$DOCK_CFG/opacity"
+echo '16' > "$DOCK_CFG/border_radius"
+echo '4' > "$DOCK_CFG/padding"
+echo '4' > "$DOCK_CFG/spacing"
+echo '4' > "$DOCK_CFG/margin"
+echo 'false' > "$DOCK_CFG/expand_to_edges"
+echo 'false' > "$DOCK_CFG/exclusive_zone"
+echo 'ThemeDefault' > "$DOCK_CFG/background"
+
+# ── 13. Log and mark done ─────────────────────────────────
 logger -t collet -p user.info "SYSTEM | FIRST_BOOT | Collet OS initialized for $(whoami)"
 mkdir -p "$(dirname "$MARKER")"
 touch "$MARKER"
