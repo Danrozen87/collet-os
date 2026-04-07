@@ -39,55 +39,56 @@ echo 'Compact' > "$COSMIC_TK/header_size"
 DARK="$HOME/.config/cosmic/com.system76.CosmicTheme.Dark.Builder/v1"
 mkdir -p "$DARK"
 
-# Palette: zero-chroma neutrals from Collet Design System
+# Palette: computed from Collet Design System (OKLCH -> sRGB)
+# Source of truth: collet.css — all values verified via OKLCH conversion
 cat > "$DARK/palette" << 'RON'
 Dark((
     name: "collet-dark",
-    bright_red: (red: 0.769, green: 0.361, blue: 0.361, alpha: 1.0),
-    bright_green: (red: 0.361, green: 0.675, blue: 0.361, alpha: 1.0),
-    bright_orange: (red: 0.769, green: 0.627, blue: 0.314, alpha: 1.0),
-    gray_1: (red: 0.145, green: 0.145, blue: 0.145, alpha: 1.0),
-    gray_2: (red: 0.184, green: 0.184, blue: 0.184, alpha: 1.0),
+    bright_red: (red: 0.673, green: 0.388, blue: 0.366, alpha: 1.0),
+    bright_green: (red: 0.368, green: 0.527, blue: 0.371, alpha: 1.0),
+    bright_orange: (red: 0.751, green: 0.573, blue: 0.315, alpha: 1.0),
+    gray_1: (red: 0.073, green: 0.073, blue: 0.073, alpha: 1.0),
+    gray_2: (red: 0.099, green: 0.099, blue: 0.099, alpha: 1.0),
     neutral_0: (red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0),
-    neutral_1: (red: 0.050, green: 0.050, blue: 0.050, alpha: 1.0),
-    neutral_2: (red: 0.100, green: 0.100, blue: 0.100, alpha: 1.0),
-    neutral_3: (red: 0.145, green: 0.145, blue: 0.145, alpha: 1.0),
-    neutral_4: (red: 0.216, green: 0.216, blue: 0.216, alpha: 1.0),
-    neutral_5: (red: 0.290, green: 0.290, blue: 0.290, alpha: 1.0),
-    neutral_6: (red: 0.388, green: 0.388, blue: 0.388, alpha: 1.0),
-    neutral_7: (red: 0.502, green: 0.502, blue: 0.502, alpha: 1.0),
-    neutral_8: (red: 0.678, green: 0.678, blue: 0.678, alpha: 1.0),
-    neutral_9: (red: 0.820, green: 0.820, blue: 0.820, alpha: 1.0),
-    neutral_10: (red: 0.880, green: 0.880, blue: 0.880, alpha: 1.0),
-    accent_blue: (red: 0.502, green: 0.502, blue: 0.502, alpha: 1.0),
-    accent_indigo: (red: 0.502, green: 0.502, blue: 0.502, alpha: 1.0),
-    accent_purple: (red: 0.502, green: 0.502, blue: 0.502, alpha: 1.0),
-    accent_pink: (red: 0.502, green: 0.502, blue: 0.502, alpha: 1.0),
-    accent_red: (red: 0.502, green: 0.502, blue: 0.502, alpha: 1.0),
-    accent_orange: (red: 0.502, green: 0.502, blue: 0.502, alpha: 1.0),
-    accent_yellow: (red: 0.502, green: 0.502, blue: 0.502, alpha: 1.0),
-    accent_green: (red: 0.502, green: 0.502, blue: 0.502, alpha: 1.0),
-    accent_warm_grey: (red: 0.502, green: 0.502, blue: 0.502, alpha: 1.0),
-    ext_warm_grey: (red: 0.502, green: 0.502, blue: 0.502, alpha: 1.0),
-    ext_orange: (red: 0.769, green: 0.627, blue: 0.314, alpha: 1.0),
-    ext_yellow: (red: 0.769, green: 0.627, blue: 0.314, alpha: 1.0),
-    ext_blue: (red: 0.361, green: 0.549, blue: 0.722, alpha: 1.0),
-    ext_purple: (red: 0.502, green: 0.502, blue: 0.502, alpha: 1.0),
-    ext_pink: (red: 0.502, green: 0.502, blue: 0.502, alpha: 1.0),
-    ext_indigo: (red: 0.361, green: 0.549, blue: 0.722, alpha: 1.0),
+    neutral_1: (red: 0.004, green: 0.004, blue: 0.004, alpha: 1.0),
+    neutral_2: (red: 0.039, green: 0.039, blue: 0.039, alpha: 1.0),
+    neutral_3: (red: 0.073, green: 0.073, blue: 0.073, alpha: 1.0),
+    neutral_4: (red: 0.099, green: 0.099, blue: 0.099, alpha: 1.0),
+    neutral_5: (red: 0.170, green: 0.170, blue: 0.170, alpha: 1.0),
+    neutral_6: (red: 0.269, green: 0.269, blue: 0.269, alpha: 1.0),
+    neutral_7: (red: 0.389, green: 0.389, blue: 0.389, alpha: 1.0),
+    neutral_8: (red: 0.596, green: 0.596, blue: 0.596, alpha: 1.0),
+    neutral_9: (red: 0.768, green: 0.768, blue: 0.768, alpha: 1.0),
+    neutral_10: (red: 0.844, green: 0.844, blue: 0.844, alpha: 1.0),
+    accent_blue: (red: 0.389, green: 0.389, blue: 0.389, alpha: 1.0),
+    accent_indigo: (red: 0.389, green: 0.389, blue: 0.389, alpha: 1.0),
+    accent_purple: (red: 0.389, green: 0.389, blue: 0.389, alpha: 1.0),
+    accent_pink: (red: 0.389, green: 0.389, blue: 0.389, alpha: 1.0),
+    accent_red: (red: 0.389, green: 0.389, blue: 0.389, alpha: 1.0),
+    accent_orange: (red: 0.389, green: 0.389, blue: 0.389, alpha: 1.0),
+    accent_yellow: (red: 0.389, green: 0.389, blue: 0.389, alpha: 1.0),
+    accent_green: (red: 0.389, green: 0.389, blue: 0.389, alpha: 1.0),
+    accent_warm_grey: (red: 0.389, green: 0.389, blue: 0.389, alpha: 1.0),
+    ext_warm_grey: (red: 0.389, green: 0.389, blue: 0.389, alpha: 1.0),
+    ext_orange: (red: 0.751, green: 0.573, blue: 0.315, alpha: 1.0),
+    ext_yellow: (red: 0.751, green: 0.573, blue: 0.315, alpha: 1.0),
+    ext_blue: (red: 0.355, green: 0.517, blue: 0.684, alpha: 1.0),
+    ext_purple: (red: 0.389, green: 0.389, blue: 0.389, alpha: 1.0),
+    ext_pink: (red: 0.389, green: 0.389, blue: 0.389, alpha: 1.0),
+    ext_indigo: (red: 0.355, green: 0.517, blue: 0.684, alpha: 1.0),
 ))
 RON
 
-# Background color override
-echo 'Some((red:0.145,green:0.145,blue:0.145,alpha:1.0))' > "$DARK/bg_color"
+# Background color override — oklch(0.145 0.000 0.0) -> sRGB
+echo 'Some((red:0.039,green:0.039,blue:0.039,alpha:1.0))' > "$DARK/bg_color"
 
-# Accent: neutral grey
-echo 'Some((red:0.502,green:0.502,blue:0.502))' > "$DARK/accent"
+# Accent: neutral grey — oklch(0.500 0.000 0.0) -> sRGB
+echo 'Some((red:0.389,green:0.389,blue:0.389))' > "$DARK/accent"
 
-# Semantic colors
-echo 'Some((red:0.769,green:0.361,blue:0.361))' > "$DARK/destructive"
-echo 'Some((red:0.361,green:0.675,blue:0.361))' > "$DARK/success"
-echo 'Some((red:0.769,green:0.627,blue:0.314))' > "$DARK/warning"
+# Semantic colors — from collet.css OKLCH values
+echo 'Some((red:0.673,green:0.388,blue:0.366))' > "$DARK/destructive"
+echo 'Some((red:0.368,green:0.527,blue:0.371))' > "$DARK/success"
+echo 'Some((red:0.751,green:0.573,blue:0.315))' > "$DARK/warning"
 
 # Corner radii (12px default)
 echo '(radius_0:[0.0,0.0,0.0,0.0],radius_xs:[4.0,4.0,4.0,4.0],radius_s:[8.0,8.0,8.0,8.0],radius_m:[12.0,12.0,12.0,12.0],radius_l:[16.0,16.0,16.0,16.0],radius_xl:[160.0,160.0,160.0,160.0])' > "$DARK/corner_radii"
@@ -104,46 +105,49 @@ mkdir -p "$LIGHT"
 cat > "$LIGHT/palette" << 'RON'
 Light((
     name: "collet-light",
-    bright_red: (red: 0.663, green: 0.314, blue: 0.314, alpha: 1.0),
-    bright_green: (red: 0.314, green: 0.584, blue: 0.314, alpha: 1.0),
-    bright_orange: (red: 0.682, green: 0.549, blue: 0.251, alpha: 1.0),
-    gray_1: (red: 0.949, green: 0.945, blue: 0.933, alpha: 1.0),
+    bright_red: (red: 0.616, green: 0.337, blue: 0.317, alpha: 1.0),
+    bright_green: (red: 0.317, green: 0.474, blue: 0.321, alpha: 1.0),
+    bright_orange: (red: 0.701, green: 0.525, blue: 0.266, alpha: 1.0),
+    gray_1: (red: 0.946, green: 0.941, blue: 0.927, alpha: 1.0),
     gray_2: (red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0),
     neutral_0: (red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0),
-    neutral_1: (red: 0.960, green: 0.957, blue: 0.949, alpha: 1.0),
-    neutral_2: (red: 0.920, green: 0.916, blue: 0.906, alpha: 1.0),
-    neutral_3: (red: 0.870, green: 0.867, blue: 0.855, alpha: 1.0),
-    neutral_4: (red: 0.780, green: 0.776, blue: 0.765, alpha: 1.0),
-    neutral_5: (red: 0.678, green: 0.675, blue: 0.663, alpha: 1.0),
-    neutral_6: (red: 0.569, green: 0.561, blue: 0.549, alpha: 1.0),
-    neutral_7: (red: 0.420, green: 0.412, blue: 0.400, alpha: 1.0),
-    neutral_8: (red: 0.353, green: 0.345, blue: 0.333, alpha: 1.0),
-    neutral_9: (red: 0.271, green: 0.263, blue: 0.251, alpha: 1.0),
-    neutral_10: (red: 0.145, green: 0.141, blue: 0.133, alpha: 1.0),
-    accent_blue: (red: 0.353, green: 0.345, blue: 0.333, alpha: 1.0),
-    accent_indigo: (red: 0.353, green: 0.345, blue: 0.333, alpha: 1.0),
-    accent_purple: (red: 0.353, green: 0.345, blue: 0.333, alpha: 1.0),
-    accent_pink: (red: 0.353, green: 0.345, blue: 0.333, alpha: 1.0),
-    accent_red: (red: 0.353, green: 0.345, blue: 0.333, alpha: 1.0),
-    accent_orange: (red: 0.353, green: 0.345, blue: 0.333, alpha: 1.0),
-    accent_yellow: (red: 0.353, green: 0.345, blue: 0.333, alpha: 1.0),
-    accent_green: (red: 0.353, green: 0.345, blue: 0.333, alpha: 1.0),
-    accent_warm_grey: (red: 0.353, green: 0.345, blue: 0.333, alpha: 1.0),
-    ext_warm_grey: (red: 0.502, green: 0.502, blue: 0.502, alpha: 1.0),
-    ext_orange: (red: 0.682, green: 0.549, blue: 0.251, alpha: 1.0),
-    ext_yellow: (red: 0.682, green: 0.549, blue: 0.251, alpha: 1.0),
-    ext_blue: (red: 0.314, green: 0.478, blue: 0.643, alpha: 1.0),
-    ext_purple: (red: 0.502, green: 0.502, blue: 0.502, alpha: 1.0),
-    ext_pink: (red: 0.502, green: 0.502, blue: 0.502, alpha: 1.0),
-    ext_indigo: (red: 0.314, green: 0.478, blue: 0.643, alpha: 1.0),
+    neutral_1: (red: 0.964, green: 0.961, blue: 0.952, alpha: 1.0),
+    neutral_2: (red: 0.946, green: 0.941, blue: 0.927, alpha: 1.0),
+    neutral_3: (red: 0.899, green: 0.896, blue: 0.887, alpha: 1.0),
+    neutral_4: (red: 0.834, green: 0.831, blue: 0.823, alpha: 1.0),
+    neutral_5: (red: 0.721, green: 0.718, blue: 0.710, alpha: 1.0),
+    neutral_6: (red: 0.599, green: 0.596, blue: 0.589, alpha: 1.0),
+    neutral_7: (red: 0.470, green: 0.468, blue: 0.460, alpha: 1.0),
+    neutral_8: (red: 0.304, green: 0.302, blue: 0.295, alpha: 1.0),
+    neutral_9: (red: 0.237, green: 0.234, blue: 0.227, alpha: 1.0),
+    neutral_10: (red: 0.153, green: 0.150, blue: 0.144, alpha: 1.0),
+    accent_blue: (red: 0.237, green: 0.234, blue: 0.227, alpha: 1.0),
+    accent_indigo: (red: 0.237, green: 0.234, blue: 0.227, alpha: 1.0),
+    accent_purple: (red: 0.237, green: 0.234, blue: 0.227, alpha: 1.0),
+    accent_pink: (red: 0.237, green: 0.234, blue: 0.227, alpha: 1.0),
+    accent_red: (red: 0.237, green: 0.234, blue: 0.227, alpha: 1.0),
+    accent_orange: (red: 0.237, green: 0.234, blue: 0.227, alpha: 1.0),
+    accent_yellow: (red: 0.237, green: 0.234, blue: 0.227, alpha: 1.0),
+    accent_green: (red: 0.237, green: 0.234, blue: 0.227, alpha: 1.0),
+    accent_warm_grey: (red: 0.237, green: 0.234, blue: 0.227, alpha: 1.0),
+    ext_warm_grey: (red: 0.470, green: 0.468, blue: 0.460, alpha: 1.0),
+    ext_orange: (red: 0.701, green: 0.525, blue: 0.266, alpha: 1.0),
+    ext_yellow: (red: 0.701, green: 0.525, blue: 0.266, alpha: 1.0),
+    ext_blue: (red: 0.304, green: 0.464, blue: 0.629, alpha: 1.0),
+    ext_purple: (red: 0.470, green: 0.468, blue: 0.460, alpha: 1.0),
+    ext_pink: (red: 0.470, green: 0.468, blue: 0.460, alpha: 1.0),
+    ext_indigo: (red: 0.304, green: 0.464, blue: 0.629, alpha: 1.0),
 ))
 RON
 
-echo 'Some((red:0.949,green:0.945,blue:0.933,alpha:1.0))' > "$LIGHT/bg_color"
-echo 'Some((red:0.353,green:0.345,blue:0.333))' > "$LIGHT/accent"
-echo 'Some((red:0.663,green:0.314,blue:0.314))' > "$LIGHT/destructive"
-echo 'Some((red:0.314,green:0.584,blue:0.314))' > "$LIGHT/success"
-echo 'Some((red:0.682,green:0.549,blue:0.251))' > "$LIGHT/warning"
+# Background color — oklch(0.955 0.005 90.0) -> sRGB
+echo 'Some((red:0.946,green:0.941,blue:0.927,alpha:1.0))' > "$LIGHT/bg_color"
+# Accent — oklch(0.355 0.003 90.0) -> sRGB
+echo 'Some((red:0.237,green:0.234,blue:0.227))' > "$LIGHT/accent"
+# Semantic colors — from collet.css OKLCH values
+echo 'Some((red:0.616,green:0.337,blue:0.317))' > "$LIGHT/destructive"
+echo 'Some((red:0.317,green:0.474,blue:0.321))' > "$LIGHT/success"
+echo 'Some((red:0.701,green:0.525,blue:0.266))' > "$LIGHT/warning"
 echo '(radius_0:[0.0,0.0,0.0,0.0],radius_xs:[4.0,4.0,4.0,4.0],radius_s:[8.0,8.0,8.0,8.0],radius_m:[12.0,12.0,12.0,12.0],radius_l:[16.0,16.0,16.0,16.0],radius_xl:[160.0,160.0,160.0,160.0])' > "$LIGHT/corner_radii"
 echo '(0, 4)' > "$LIGHT/gaps"
 echo '0' > "$LIGHT/active_hint"
