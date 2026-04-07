@@ -30,6 +30,20 @@ ln -sf /usr/lib/os-release /etc/os-release
 # Set default hostname
 echo "collet" > /etc/hostname
 
+# ── Replace default wallpapers ─────────────────────────────
+# COSMIC and all DEs look for /usr/share/backgrounds/default*
+# Replace the symlinks with our actual files — no config needed
+rm -f /usr/share/backgrounds/default-dark.jxl /usr/share/backgrounds/default.jxl 2>/dev/null || true
+cp /usr/share/backgrounds/collet/default-dark.png /usr/share/backgrounds/default-dark.jxl 2>/dev/null || true
+cp /usr/share/backgrounds/collet/default.png /usr/share/backgrounds/default.jxl 2>/dev/null || true
+echo ":: Default wallpapers replaced"
+
+# ── Fix script permissions ─────────────────────────────────
+chmod +x /usr/bin/ask 2>/dev/null || true
+chmod +x /usr/share/collet-os/first-boot.sh 2>/dev/null || true
+chmod +x /usr/share/collet-os/audit/collet-audit.sh 2>/dev/null || true
+echo ":: Script permissions fixed"
+
 # ── Plymouth boot splash ───────────────────────────────────
 if [ -d /usr/share/plymouth/themes/collet ]; then
     plymouth-set-default-theme collet 2>/dev/null || true
