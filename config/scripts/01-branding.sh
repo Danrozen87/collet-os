@@ -50,4 +50,12 @@ if [ -d /usr/share/plymouth/themes/collet ]; then
     echo ":: Plymouth theme set"
 fi
 
+# ── Enable first-boot service for all users ───────────────
+# systemd user service runs once per user on first login,
+# applying the complete Collet identity (theme, fonts, icons, AI)
+mkdir -p /etc/systemd/user/default.target.wants
+ln -sf /usr/lib/systemd/user/collet-first-boot.service \
+    /etc/systemd/user/default.target.wants/collet-first-boot.service 2>/dev/null || true
+echo ":: First-boot service enabled"
+
 echo ":: Branding applied"
