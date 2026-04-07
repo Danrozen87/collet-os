@@ -69,7 +69,6 @@ modules:
       - 01-branding.sh
       - 02-ai-layer.sh
       - 03-cosmic-defaults.sh
-      - 04-collet-compositor.sh
 
   # ── Systemd service configuration ────────────────────────
   - type: systemd
