@@ -236,6 +236,10 @@ echo 'false' > "$DOCK_CFG/expand_to_edges"
 echo 'false' > "$DOCK_CFG/exclusive_zone"
 echo 'ThemeDefault' > "$DOCK_CFG/background"
 
+# Dock applets: app list in center, system controls on the right
+echo 'Some(["com.system76.CosmicAppList"])' > "$DOCK_CFG/plugins_center"
+echo 'Some(([], ["com.system76.CosmicAppletPower"]))' > "$DOCK_CFG/plugins_wings"
+
 # ── 13. Log and mark done ─────────────────────────────────
 logger -t collet -p user.info "SYSTEM | FIRST_BOOT | Collet OS initialized for $(whoami)"
 mkdir -p "$(dirname "$MARKER")"
