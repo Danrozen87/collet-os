@@ -218,16 +218,17 @@ main() {
     # Show thinking indicator
     printf "${C_DIM}thinking...${C_RST}\r"
 
-    # Prepend language hint to query for small models that struggle with language detection
-    local sys_lang="${LANG:-en_US.UTF-8}"
-    sys_lang="${sys_lang%%.*}"
-    sys_lang="${sys_lang%%_*}"
-    case "$sys_lang" in
-        en) query="[Reply in English] $query" ;;
+    # Always reply in English unless user config overrides
+    # Small models can't reliably detect query language, so we force it
+    local collet_lang="${COLLET_LANG:-en}"
+    if [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/collet-os/ai/language" ]; then
+        collet_lang="$(cat "${XDG_CONFIG_HOME:-$HOME/.config}/collet-os/ai/language" 2>/dev/null | tr -d '[:space:]')"
+    fi
+    case "$collet_lang" in
         sv) query="[Svara på svenska] $query" ;;
         de) query="[Antworte auf Deutsch] $query" ;;
         fr) query="[Réponds en français] $query" ;;
-        *) query="[Reply in English] $query" ;;
+        *)  query="[Reply in English] $query" ;;
     esac
 
     # Call backend

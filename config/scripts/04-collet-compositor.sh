@@ -2,46 +2,32 @@
 set -euo pipefail
 
 # ── Collet OS Compositor ──────────────────────────────────
-# Builds our cosmic-comp fork with spring animations and
-# refined shadows. Replaces the stock binary in the image.
+# Downloads pre-built cosmic-comp binary from our fork's
+# GitHub releases. Built on native ARM64 runner — no
+# cross-compilation, no QEMU, fast.
 #
-# This runs during the image build (not on user machines).
-# The compiled binary is baked into the immutable image.
+# The binary includes:
+# - Spring animations on window open/close/tile/minimize
+# - Refined softer shadows
+# - Workspace spring transitions
 
-echo ":: Building Collet compositor (spring animations + shadows)"
+echo ":: Installing Collet compositor"
 
-# Install build dependencies
-dnf install -y --setopt=install_weak_deps=False \
-    rust cargo gcc g++ make cmake \
-    wayland-devel libxkbcommon-devel \
-    mesa-libEGL-devel mesa-libgbm-devel \
-    libinput-devel libudev-devel \
-    libseat-devel pixman-devel \
-    pango-devel cairo-devel \
-    systemd-devel dbus-devel \
-    pipewire-devel libdisplay-info-devel \
-    clang-devel 2>/dev/null || true
+ARCH=$(uname -m)
+case "$ARCH" in
+    aarch64|arm64) ASSET="cosmic-comp" ;;
+    x86_64)        ASSET="cosmic-comp" ;;
+    *)             echo ":: Unsupported arch: $ARCH, keeping stock"; exit 0 ;;
+esac
 
-# Clone our fork
-cd /tmp
-git clone --depth 1 https://github.com/Danrozen87/collet-cosmic-comp.git
-cd collet-cosmic-comp
+# Download from our fork's latest release
+DOWNLOAD_URL="https://github.com/Danrozen87/collet-cosmic-comp/releases/latest/download/${ASSET}"
 
-# Build with collet-animations feature (enabled by default)
-cargo build --release 2>&1 | tail -5
-
-# Replace stock compositor binary
-if [ -f target/release/cosmic-comp ]; then
-    cp target/release/cosmic-comp /usr/bin/cosmic-comp
-    echo ":: Collet compositor installed"
+if curl -sfL "$DOWNLOAD_URL" -o /tmp/cosmic-comp-collet; then
+    chmod +x /tmp/cosmic-comp-collet
+    cp /tmp/cosmic-comp-collet /usr/bin/cosmic-comp
+    rm /tmp/cosmic-comp-collet
+    echo ":: Collet compositor installed (spring animations + refined shadows)"
 else
-    echo ":: WARNING: Compositor build failed, keeping stock"
+    echo ":: WARNING: Could not download compositor, keeping stock"
 fi
-
-# Cleanup build artifacts to keep image small
-cd /
-rm -rf /tmp/collet-cosmic-comp
-dnf remove -y rust cargo gcc g++ make cmake clang-devel 2>/dev/null || true
-dnf clean all 2>/dev/null || true
-
-echo ":: Compositor step complete"
